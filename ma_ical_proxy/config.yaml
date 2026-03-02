@@ -1,0 +1,19 @@
+name: "MA iCal Abfall Proxy"
+description: "Mannheim iCal Abfall Proxy"
+version: "1.0.6"
+slug: "ma_ical_proxy"
+init: false
+arch:
+  - aarch64
+  - amd64
+  - armhf
+  - armv7
+ports:
+#6868 for obvious reasons
+  6868/tcp: 6868
+options:
+#this is just an example adress - make sure you get the url from https://www.mannheim.de/de/service-bieten/umwelt/stadtraumservice-mannheim/abfallwirtschaft/abfallkalender/abfallkalender-online and replace &year=20XX with &year={year}
+#this is not my actual adress and I just took a iCal from Lupinenstraße for the lulz
+  ical_url: "https://www.insert-it.de/BmsAbfallkalenderMannheim/Main/Calender?bmsLocationId=426060&year={year}"
+schema:
+  ical_url: str
