@@ -1,6 +1,6 @@
 name: "MA iCal Proxy"
 description: "Mannheim iCal Proxy"
-version: "1.0.6"
+version: "1.0.7"
 slug: "ma_ical_proxy"
 init: false
 arch:
