@@ -1,5 +1,5 @@
-name: "MA iCal Abfall Proxy"
-description: "Mannheim iCal Abfall Proxy"
+name: "MA iCal Proxy"
+description: "Mannheim iCal Proxy"
 version: "1.0.6"
 slug: "ma_ical_proxy"
 init: false
