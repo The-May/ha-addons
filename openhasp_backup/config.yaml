@@ -1,0 +1,37 @@
+name: "OpenHASP Backup"
+description: "Simple Full Backup Tool for OpenHASP"
+version: "1.0.9"
+slug: "openhasp_backup"
+init: false
+arch:
+  - aarch64
+  - amd64
+  - armhf
+  - armv7
+
+options:
+  ftp_display_host:
+    - "10.10.10.1"
+    - "10.10.10.2"
+  ftp_display_user: "changeme1"
+  ftp_display_pass: "changeme2"
+  ftp_display_port: 21
+  ftp_display_passive: 50009
+  ftp_target_host: "10.10.10.3"
+  ftp_target_port: 21
+  ftp_target_user: "changeme3"
+  ftp_target_pass: "changeme4"
+  ftp_target_dir: "media/openhasp_backup"
+
+schema:
+  ftp_display_host:
+    - str
+  ftp_display_user: str
+  ftp_display_pass: str
+  ftp_display_port: int
+  ftp_display_passive: int
+  ftp_target_host: str
+  ftp_target_port: int
+  ftp_target_user: str
+  ftp_target_pass: str
+  ftp_target_dir: str
