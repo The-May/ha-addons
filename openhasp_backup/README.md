@@ -3,8 +3,12 @@
 Please be really aware about this fact.
 ### Features
 
-- supports multiple OpenHASP Plates. 
-- Configuration can easily be done in the "Configuration" Tab
+- supports multiple OpenHASP Plates.
+  <img width="398" height="252" alt="image" src="https://github.com/user-attachments/assets/b1d3b238-7b42-4d32-b45f-682c7c68a138" />
+
+- Whole configuration can easily be done in the "Configuration" Tab
+  <img width="725" height="873" alt="image" src="https://github.com/user-attachments/assets/1c473226-8602-4cec-8953-f6c8fbbabc7c" />
+
 
 ### Purpose 
 
