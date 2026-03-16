@@ -1,4 +1,8 @@
 #!/usr/bin/env python3
+"""
+OpenHASP FTP Backup - Home Assistant Addon
+Backs up multiple openHASP devices via FTP, uploads zips to a target FTP server.
+"""
 
 import ftplib
 import io
@@ -17,6 +21,7 @@ logging.basicConfig(
 )
 log = logging.getLogger("openhasp_backup")
 
+# ── Config ────────────────────────────────────────────────────────
 with open("/data/options.json") as f:
     OPT = json.load(f)
 
@@ -30,6 +35,7 @@ ftp_target_port     = OPT["ftp_target_port"]
 ftp_target_user     = OPT["ftp_target_user"]
 ftp_target_pass     = OPT["ftp_target_pass"]
 ftp_target_dir      = OPT["ftp_target_dir"].lstrip("/\\").rstrip("/\\").replace("\\", "/")
+# ─────────────────────────────────────────────────────────────────
 
 
 def open_data_connection(host: str) -> socket.socket:
@@ -73,6 +79,17 @@ def download_file(ftp: ftplib.FTP, host: str, name: str) -> bytes:
             break
         buf.write(chunk)
     data_sock.close()
+
+    # Drain all pending responses (150 start + 226 complete)
+    # Some openHASP devices send both on the control socket after data is done
+    for _ in range(3):
+        try:
+            resp = ftp.getresp()
+            if resp.startswith("2"):
+                break  # got final success, done
+        except ftplib.all_errors:
+            break
+
     return buf.getvalue()
 
 
@@ -102,7 +119,7 @@ def build_zip(host: str, index: int) -> tuple[str, bytes] | None:
             except Exception as e:
                 log.error("  ! Failed to download %s: %s", name, e)
 
-    ftp.quit()
+    ftp.close()
     return zip_name, buf.getvalue()
 
 
