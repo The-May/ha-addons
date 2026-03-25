@@ -1,15 +1,11 @@
 #!/usr/bin/env python3
-"""
-OpenHASP FTP Backup - Home Assistant Addon
-Backs up multiple openHASP devices via FTP, uploads zips to a target FTP server.
-"""
-
 import ftplib
 import io
 import json
 import logging
 import socket
 import sys
+import urllib.request
 import zipfile
 
 # ── Logging ───────────────────────────────────────────────────────
@@ -35,6 +31,7 @@ ftp_target_port     = OPT["ftp_target_port"]
 ftp_target_user     = OPT["ftp_target_user"]
 ftp_target_pass     = OPT["ftp_target_pass"]
 ftp_target_dir      = OPT["ftp_target_dir"].lstrip("/\\").rstrip("/\\").replace("\\", "/")
+webhook_url         = OPT["webhook_url"]
 # ─────────────────────────────────────────────────────────────────
 
 
@@ -81,12 +78,11 @@ def download_file(ftp: ftplib.FTP, host: str, name: str) -> bytes:
     data_sock.close()
 
     # Drain all pending responses (150 start + 226 complete)
-    # Some openHASP devices send both on the control socket after data is done
     for _ in range(3):
         try:
             resp = ftp.getresp()
             if resp.startswith("2"):
-                break  # got final success, done
+                break
         except ftplib.all_errors:
             break
 
@@ -132,7 +128,7 @@ def ensure_target_dir(ftp: ftplib.FTP) -> None:
             ftp.mkd(path)
             log.info("Created directory: %s", path)
         except ftplib.error_perm:
-            pass  # already exists
+            pass
 
 
 def upload_zip(zip_name: str, zip_bytes: bytes) -> bool:
@@ -142,7 +138,7 @@ def upload_zip(zip_name: str, zip_bytes: bytes) -> bool:
     try:
         ftp.connect(ftp_target_host, ftp_target_port, timeout=15)
         ftp.login(ftp_target_user, ftp_target_pass)
-        ftp.set_pasv(False)  # HA FTP addon only supports active mode
+        ftp.set_pasv(False)
     except ftplib.all_errors as e:
         log.error("Failed to connect to target FTP %s: %s", ftp_target_host, e)
         return False
@@ -168,22 +164,52 @@ def upload_zip(zip_name: str, zip_bytes: bytes) -> bool:
     return True
 
 
+def send_webhook(ok: int, fail: int, failed_hosts: list[str]) -> None:
+    if not webhook_url:
+        return
+
+    status = "success" if fail == 0 else ("failed" if ok == 0 else "partial")
+    payload = {
+        "status": status,
+        "devices_ok": ok,
+        "devices_failed": fail,
+        "failed_hosts": failed_hosts,
+    }
+    body = json.dumps(payload).encode()
+    req = urllib.request.Request(
+        webhook_url,
+        data=body,
+        headers={"Content-Type": "application/json"},
+        method="POST",
+    )
+    try:
+        with urllib.request.urlopen(req, timeout=10) as resp:
+            log.info("Webhook sent — status: %s, HTTP %d", status, resp.status)
+    except Exception as e:
+        log.error("Webhook failed: %s", e)
+
+
 def main():
     log.info("OpenHASP Backup starting — %d device(s)", len(ftp_display_host))
     log.info("Target: %s:%d/%s", ftp_target_host, ftp_target_port, ftp_target_dir)
 
     ok, fail = 0, 0
+    failed_hosts = []
+
     for i, host in enumerate(ftp_display_host, start=1):
         result = build_zip(host, i)
         if result is None:
             fail += 1
+            failed_hosts.append(host)
             continue
         if upload_zip(*result):
             ok += 1
         else:
             fail += 1
+            failed_hosts.append(host)
 
     log.info("── Finished: %d succeeded, %d failed ──", ok, fail)
+    send_webhook(ok, fail, failed_hosts)
     sys.exit(0 if fail == 0 else 1)
 
 
