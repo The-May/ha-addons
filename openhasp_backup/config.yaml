@@ -1,6 +1,6 @@
 name: "OpenHASP Backup"
-description: "Simple Full Backup Tool for OpenHASP"
-version: "1.0.10"
+description: "Simple Full Backup Tool for OpenHASP."
+version: "1.0.11"
 slug: "openhasp_backup"
 init: false
 arch:
@@ -11,17 +11,19 @@ arch:
 
 options:
   ftp_display_host:
-    - "10.10.10.1"
-    - "10.10.10.2"
-  ftp_display_user: "changeme1"
-  ftp_display_pass: "changeme2"
+    - "ip.of.openhasp.display1"
+    - "ip.of.openhasp.display2"
+    - "ip.of.openhasp.display3"
+  ftp_display_user: "changeme"
+  ftp_display_pass: "changeme"
   ftp_display_port: 21
   ftp_display_passive: 50009
-  ftp_target_host: "10.10.10.3"
+  ftp_target_host: "changeme"
   ftp_target_port: 21
-  ftp_target_user: "changeme3"
-  ftp_target_pass: "changeme4"
+  ftp_target_user: "changeme"
+  ftp_target_pass: "changeme"
   ftp_target_dir: "media/openhasp_backup"
+  webhook_url: "http://ip.of.homeassistant.changeme:8123/api/webhook/webhook-ID-here-changeme"
 
 schema:
   ftp_display_host:
@@ -35,3 +37,4 @@ schema:
   ftp_target_user: str
   ftp_target_pass: str
   ftp_target_dir: str
+  webhook_url: str
