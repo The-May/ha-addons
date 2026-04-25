@@ -1,0 +1,39 @@
+name: "DB History Plotter"
+description: "Queries HA DB and generates plots as PNG images."
+version: "1.0.0"
+slug: "db_history_plotter"
+init: false
+arch:
+  - aarch64
+  - amd64
+  - armhf
+  - armv7
+
+map:
+  - media:rw
+
+options:
+  db_type: "mariadb"
+  db_host: "core-mariadb"
+  db_name: "homeassistant"
+  db_user: "homeassistant"
+  db_password: ""
+  timezone: "Europe/Berlin"
+  sensors:
+    - sensor_id: "sensor.vindstyrka_01_temperature"
+      hours_back: 24
+      y_label: "Temperature (°C)"
+      plot_title: "Example – Last 24 Hours"
+
+schema:
+  db_type: "list(sqlite|mariadb)"
+  db_host: str
+  db_name: str
+  db_user: str
+  db_password: str
+  timezone: str
+  sensors:
+    - sensor_id: str
+      hours_back: int
+      y_label: str
+      plot_title: str
