@@ -28,8 +28,7 @@ All settings are edited via the addon's **Configuration** tab in the HA UI.
 | `db_name` | Database name (default: `homeassistant`) |
 | `db_user` | Database username |
 | `db_password` | Database password |
-| `utc_offset_hours` | Your UTC offset as an integer, e.g. `1` for CET, `-5` for EST |
-| `plot_interval_minutes` | How often to regenerate plots (e.g. `5`) |
+| `Timezone` | Use a Timezone (default: `Europe/Berlin`) |
 | `sensors` | List of sensors to plot (see below) |
 
 ### Sensor entries
