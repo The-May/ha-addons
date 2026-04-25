@@ -12,9 +12,10 @@ Feel free to report if it works or not.
 ## Installation
 
 1. Add this HA Repo
-2. In HA, go to **Settings → Add-ons → Add-on Store**
-3. Find **DB History Plotter** and install it.
-4. Profit.
+   [![Open your Home Assistant instance and show the add add-on repository dialog with a specific repository URL pre-filled.](https://my.home-assistant.io/badges/supervisor_add_addon_repository.svg)](https://my.home-assistant.io/redirect/supervisor_add_addon_repository/?repository_url=https%3A%2F%2Fgithub.com%2FThe-May%2Fha-addons)
+3. In HA, go to **Settings → Add-ons → Add-on Store**
+4. Find **DB History Plotter** and install it.
+5. Profit.
 
 ## Configuration
 
