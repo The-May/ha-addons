@@ -1,6 +1,6 @@
 name: "OpenHASP Backup"
 description: "Simple Full Backup Tool for OpenHASP."
-version: "1.0.11"
+version: "1.0.12"
 slug: "openhasp_backup"
 init: false
 arch:
