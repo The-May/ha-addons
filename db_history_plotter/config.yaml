@@ -1,6 +1,6 @@
 name: "DB History Plotter"
 description: "Queries HA DB and generates plots as PNG images."
-version: "1.0.0"
+version: "1.0.1"
 slug: "db_history_plotter"
 init: false
 arch:
