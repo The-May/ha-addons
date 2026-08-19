@@ -1,6 +1,6 @@
 name: "DB History Plotter"
 description: "Queries HA DB and generates plots as PNG images."
-version: "1.0.1"
+version: "1.0.2"
 slug: "db_history_plotter"
 init: false
 arch:
@@ -17,6 +17,7 @@ options:
   db_host: "core-mariadb"
   db_name: "homeassistant"
   db_user: "homeassistant"
+  sqlite_file: "home-assistant_v2.db"
   db_password: ""
   timezone: "Europe/Berlin"
   sensors:
@@ -32,6 +33,7 @@ schema:
   db_user: str
   db_password: str
   timezone: str
+  sqlite_file: str
   sensors:
     - sensor_id: str
       hours_back: int
