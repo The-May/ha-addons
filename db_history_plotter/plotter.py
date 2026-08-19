@@ -13,13 +13,14 @@ from zoneinfo import ZoneInfo
 with open("/data/options.json") as f:
     OPT = json.load(f)
 
-DB_TYPE  = OPT["db_type"]
-DB_HOST  = OPT["db_host"]
-DB_NAME  = OPT["db_name"]
-DB_USER  = OPT["db_user"]
-DB_PASSWORD = OPT["db_password"]
+DB_TYPE       = OPT["db_type"]
+DB_HOST       = OPT["db_host"]
+DB_NAME       = OPT["db_name"]
+DB_USER       = OPT["db_user"]
+DB_PASSWORD   = OPT["db_password"]
+SQLITE_FILE   = OPT["sqlite_file"]
 TIMEZONE_NAME = OPT.get("timezone", "UTC")
-SENSORS  = OPT["sensors"]
+SENSORS       = OPT["sensors"]
 
 # Paths inside the container
 CSV_DIR   = "/tmp/db_history_plotter"
@@ -43,7 +44,6 @@ print(f"{'─'*60}")
 try:
     if DB_TYPE == "sqlite":
         import sqlite3
-        SQLITE_FILE = "/config/home-assistant_v2.db"
         conn = sqlite3.connect(SQLITE_FILE)
         print(f"[DB] Connected to SQLite: {SQLITE_FILE}")
     elif DB_TYPE == "mariadb":
