@@ -1,6 +1,6 @@
 name: "DB History Plotter"
 description: "Queries HA DB and generates plots as PNG images."
-version: "1.0.4"
+version: "1.0.5"
 slug: "db_history_plotter"
 init: false
 arch:
@@ -9,6 +9,7 @@ arch:
 
 map:
   - media:rw
+  - homeassistant_config:ro
 
 options:
   db_type: "mariadb"
