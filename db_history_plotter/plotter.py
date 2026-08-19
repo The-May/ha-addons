@@ -79,7 +79,7 @@ for i, sensor in enumerate(SENSORS):
         FROM states
         JOIN states_meta ON states.metadata_id = states_meta.metadata_id
         WHERE states_meta.entity_id = '{sensor_id}'
-          AND states.state != 'unavailable'
+          AND states.state NOT IN ('unavailable', 'unknown')
           AND states.last_updated_ts >= strftime('%s', 'now', '-{hours_back} hours')
         ORDER BY states.state_id ASC;
         """
@@ -92,7 +92,7 @@ for i, sensor in enumerate(SENSORS):
         FROM states
         JOIN states_meta ON states.metadata_id = states_meta.metadata_id
         WHERE states_meta.entity_id = '{sensor_id}'
-          AND states.state != 'unavailable'
+          AND states.state NOT IN ('unavailable', 'unknown')
           AND states.last_updated_ts >= {cutoff_ts}
         ORDER BY states.state_id ASC;
         """
@@ -125,11 +125,12 @@ for i, sensor in enumerate(SENSORS):
     df = pd.read_csv(
         csv_file,
         names=["timestamp", "value", "entity_id"],
-        dtype={"timestamp": object, "value": float, "entity_id": object},
+        dtype={"timestamp": object, "value": object, "entity_id": object},
     )
 
     df["timestamp"] = pd.to_numeric(df["timestamp"], errors="coerce")
-    df = df.dropna(subset=["timestamp"])
+    df["value"] = pd.to_numeric(df["value"], errors="coerce")
+    df = df.dropna(subset=["timestamp", "value"])
     df["timestamp"] = pd.to_datetime(
         df["timestamp"].astype("float64"), unit="s", utc=True, errors="raise"
     ).dt.tz_convert(TZ)
