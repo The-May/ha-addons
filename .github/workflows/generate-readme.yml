@@ -1,0 +1,70 @@
+name: Generate README
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  generate-readme:
+    name: Generate README
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Install yq
+        run: |
+          sudo wget -qO /usr/local/bin/yq \
+            https://github.com/mikefarah/yq/releases/latest/download/yq_linux_amd64
+          sudo chmod +x /usr/local/bin/yq
+
+      - name: Generate README
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          cp .templates/README.md README.generated.md
+
+          while IFS= read -r config; do
+            addon_dir="$(dirname "$config")"
+
+            name="$(yq -r '.name // ""' "$config")"
+            description="$(yq -r '.description // ""' "$config")"
+
+            if [[ -z "$name" ]]; then
+              echo "Skipping $addon_dir: no name"
+              continue
+            fi
+
+            echo "Adding: $name"
+
+            printf '✓ [%s](%s/) : %s\n\n' \
+              "$name" \
+              "$addon_dir" \
+              "$description" \
+              >> /tmp/addons.txt
+
+          done < <(
+            find . -mindepth 2 -maxdepth 2 -type f \
+              \( -name 'config.yaml' -o -name 'config.yml' \) \
+              | sort
+          )
+
+          sed -i \
+            -e '/%%ADDONS_LIST%%/r /tmp/addons.txt' \
+            -e '/%%ADDONS_LIST%%/d' \
+            README.generated.md
+
+          mv README.generated.md README.md
+
+      - name: Commit README
+        uses: EndBug/add-and-commit@v9
+        with:
+          message: "docs: update README"
+          default_author: github_actions
