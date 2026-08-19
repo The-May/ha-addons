@@ -14,7 +14,7 @@ Repository URL:
 
 This repository contains the following apps:
 
-✓ [DB History Plotter](./db_history_plotter/) : Queries HA DB and generates plots as PNG images.
+✓ [DB History Plotter](./db_history_plotter/) : Queries HA DB and generates plots as PNG images. Supports MariaDB and SQlite
 
 ✓ [Example add-on](./example/) : Example add-on
 
