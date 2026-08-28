@@ -1,6 +1,6 @@
 name: "Signal CLI REST API"
-description: "Signal CLI  HA Addon/App"
-version: "0"
+description: "Signal CLI HA Addon/App"
+version: "0.100"
 slug: "signal_cli_rest_api"
 init: false
 
