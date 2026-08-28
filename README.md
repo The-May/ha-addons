@@ -20,5 +20,5 @@ This repository contains the following apps:
 
 ✓ [OpenHASP Backup](./openhasp_backup/) : Simple Full Backup Tool for OpenHASP.
 
-✓ [Signal CLI REST API](./signal-cli/) : Signal CLI  HA Addon/App
+✓ [Signal CLI REST API](./signal-cli/) : Signal CLI HA Addon/App
 
