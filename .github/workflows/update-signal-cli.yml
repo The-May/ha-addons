@@ -1,0 +1,97 @@
+name: Update Signal CLI
+
+on:
+  schedule:
+    - cron: "0 6 * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  update-signal-cli:
+    name: Update Signal CLI
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v7
+
+      - name: Install yq
+        run: |
+          sudo wget -qO /usr/local/bin/yq \
+            https://github.com/mikefarah/yq/releases/latest/download/yq_linux_amd64
+          sudo chmod +x /usr/local/bin/yq
+
+      - name: Get latest Signal CLI REST API version
+        id: version
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          version="$(
+            curl -fsSL \
+              -H "Accept: application/vnd.github+json" \
+              -H "X-GitHub-Api-Version: 2022-11-28" \
+              https://api.github.com/repos/bbernhard/signal-cli-rest-api/releases/latest \
+              | yq -r '.tag_name'
+          )"
+
+          version="${version#v}"
+
+          if [[ -z "$version" || "$version" == "null" ]]; then
+            echo "Unable to determine latest Signal CLI REST API version"
+            exit 1
+          fi
+
+          echo "Latest upstream version: $version"
+          echo "version=$version" >> "$GITHUB_OUTPUT"
+
+      - name: Generate config.yaml
+        shell: bash
+        env:
+          VERSION: ${{ steps.version.outputs.version }}
+        run: |
+          set -euo pipefail
+
+          mkdir -p signal-cli
+
+          sed "s/{{VERSION}}/${VERSION}/g" \
+            .templates/signal-cli/config.yaml \
+            > signal-cli/config.yaml
+
+          echo "Generated signal-cli/config.yaml:"
+          cat signal-cli/config.yaml
+
+      - name: Check for changes
+        id: changes
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          if git diff --quiet -- signal-cli/config.yaml; then
+            echo "changed=false" >> "$GITHUB_OUTPUT"
+            echo "Signal CLI is already up to date."
+          else
+            echo "changed=true" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Create Pull Request
+        if: steps.changes.outputs.changed == 'true'
+        uses: peter-evans/create-pull-request@v7
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          commit-message: "chore: update signal-cli"
+          title: "chore: update signal-cli to ${{ steps.version.outputs.version }}"
+          body: |
+            Updates the Signal CLI REST API add-on to
+            `bbernhard/signal-cli-rest-api` version
+            `${{ steps.version.outputs.version }}`.
+
+            This PR was automatically generated.
+          branch: update-signal-cli
+          delete-branch: true
+          labels: |
+            dependencies
+            signal-cli
