@@ -1,0 +1,30 @@
+name: "Signal CLI REST API"
+description: "Signal CLI HA Addon/App"
+version: "{{VERSION}}"
+slug: "signal_cli_rest_api"
+init: false
+
+arch:
+  - amd64
+
+image: bbernhard/signal-cli-rest-api
+startup: services
+
+options:
+  mode: normal
+
+schema:
+  mode: list(normal|native|json-rpc|json-rpc-native)
+
+environment:
+  MODE: "{options.mode}"
+  PORT: "8080"
+
+map:
+  - addon_config:rw
+
+ports:
+  8080/tcp: 8080
+
+ports_description:
+  8080/tcp: "REST API (external access)"
