@@ -1,4 +1,4 @@
-name: Dependabot auto-approve and merge
+name: Auto-approve and merge
 
 on:
   pull_request_target:
@@ -8,8 +8,10 @@ permissions:
   contents: write
 
 jobs:
-  dependabot:
-    if: github.event.pull_request.user.login == 'dependabot[bot]'
+  auto-merge:
+    if: |
+      github.event.pull_request.user.login == 'dependabot[bot]' ||
+      github.event.pull_request.user.login == 'github-actions[bot]'
     runs-on: ubuntu-latest
 
     steps:
