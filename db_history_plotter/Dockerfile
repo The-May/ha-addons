@@ -14,10 +14,12 @@ RUN apk add --no-cache \
 RUN pip install --no-cache-dir \
     pandas \
     matplotlib \
-    mysqlclient
+    mysqlclient \
+    flask
 
 COPY run.sh /run.sh
 COPY plotter.py /app/plotter.py
+COPY webui.py /app/webui.py
 
 RUN chmod +x /run.sh
 
